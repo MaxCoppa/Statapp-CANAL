@@ -423,7 +423,7 @@ def correct_non_overlapping_subscriptions(data_path, window_months=12):
         # Store the list of counts for this ID_ABONNE
         results[id_abonne] = subscriptions
         results_df = pd.DataFrame(list(results.items()), columns=['ID_ABONNE', 'NOMBRE_ABONNEMENTS'])
-        save_to_csv_file(results_df, data_path + 'liste_fidelite_v4.csv')
+        save_to_csv_file(results_df, data_path + 'liste_fidelite_v3.csv')
 
 
     return True
