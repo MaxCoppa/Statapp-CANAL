@@ -2,6 +2,7 @@ import numpy as np
 import pandas as pd
 from sklearn.cluster import AgglomerativeClustering
 from sklearn.preprocessing import StandardScaler
+from sklearn.metrics import silhouette_score
 import matplotlib.pyplot as plt
 import os
 import s3fs
@@ -27,6 +28,24 @@ for column in data.columns.tolist():
     data[column]  = scaler.fit_transform(data[column].values.reshape(-1, 1))
 
 
-clustering = AgglomerativeClustering(n_clusters=data.shape[0]-1, linkage='ward', affinity='euclidean')
-clustering.fit(data)
-print(clustering.labels_)
+# Silhouette score
+def silhouette_scores_at_each_step(X, n_clusters_range):
+    silhouette_scores = []
+    for n_clusters in n_clusters_range:
+        clustering = AgglomerativeClustering(n_clusters=n_clusters, linkage='ward', metric='euclidean')
+        labels = clustering.fit_predict(X)
+        if len(np.unique(labels)) == 1:
+            silhouette_scores.append(-1)  # Silhouette score not computable
+        else:
+            silhouette_scores.append(silhouette_score(X, labels))
+    return silhouette_scores
+
+n_clusters_range = range(data.shape[0], data.shape[0] +1, 1)
+silhouette_scores = silhouette_scores_at_each_step(data, n_clusters_range)
+
+# Plot
+plt.plot(n_clusters_range, silhouette_scores, marker='o')
+plt.xlabel('Nombre de clusters')
+plt.ylabel('Score de silhouette')
+plt.title('Score de silhouette à chaque étape')
+plt.show()
