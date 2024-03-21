@@ -1,6 +1,7 @@
 import numpy as np
 import pandas as pd
-from sklearn.cluster import AgglomerativeClustering
+#from sklearn.cluster import AgglomerativeClustering
+from sklearn.cluster import Birch
 from sklearn.preprocessing import StandardScaler
 from sklearn.metrics import silhouette_score
 import matplotlib.pyplot as plt
@@ -32,7 +33,7 @@ for column in data.columns.tolist():
 def silhouette_scores_at_each_step(X, n_clusters_range):
     silhouette_scores = []
     for n_clusters in n_clusters_range:
-        clustering = AgglomerativeClustering(n_clusters=n_clusters, linkage='ward', metric='euclidean')
+        clustering = Birch(n_clusters=n_clusters, linkage='ward', metric='euclidean')
         labels = clustering.fit_predict(X)
         if len(np.unique(labels)) == 1:
             silhouette_scores.append(-1)  # Silhouette score not computable
@@ -40,7 +41,8 @@ def silhouette_scores_at_each_step(X, n_clusters_range):
             silhouette_scores.append(silhouette_score(X, labels))
     return silhouette_scores
 
-n_clusters_range = range(data.shape[0], data.shape[0] +1, 1)
+n_clusters_range = range(2, 3, 1)
+
 silhouette_scores = silhouette_scores_at_each_step(data, n_clusters_range)
 
 # Plot
